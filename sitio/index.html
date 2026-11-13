@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DentiCode · Administración para clínicas dentales</title>
+  <meta name="description" content="Programa de administración para clínicas dentales: agenda, pacientes, tratamientos, cobros y caja en un solo panel, con un asistente avanzado que contesta el WhatsApp de tu consultorio cuando no hay nadie.">
+  <meta name="theme-color" content="#E9EDF2">
+  <script>
+    document.documentElement.classList.add('js');
+    // ?solo=panel enseña solo el panel de recepción (lo usa el roadmap para sus pantallazos)
+    if (new URLSearchParams(location.search).get('solo') === 'panel') document.documentElement.classList.add('solo-panel');
+  </script>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="tacto.css">
+  <link rel="stylesheet" href="secciones.css">
+  <link rel="stylesheet" href="personaje.css">
+  <link rel="stylesheet" href="tablero.css">
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <a class="saltar" href="#principal">Saltar al contenido</a>
+
+  <header class="cabecera">
+    <a class="marca-dc" href="#" aria-label="DentiCode, inicio">
+      <img src="img/logo.svg" width="32" height="32" alt="">
+      <span>DentiCode</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#tablero">Panel</a>
+      <a href="#noche">Asistente</a>
+      <a href="#ciclo">Funciones</a>
+      <a href="#piloto">Piloto</a>
+    </nav>
+  </header>
+
+  <main id="principal">
+
+    <!-- ── Héroe: texto en calma a un lado, la muela de cristal al otro ── -->
+    <section class="heroe" aria-labelledby="titulo-heroe">
+      <div class="heroe-arte" id="arte" data-sangra>
+        <img class="heroe-respaldo" src="img/muela.webp" width="1200" height="1400" alt="" decoding="async" fetchpriority="high">
+        <div class="heroe-lienzo" id="lienzo3d" aria-hidden="true"></div>
+        <figure class="burbuja" aria-label="Ejemplo: mensaje de una paciente a las 23:47 y la respuesta de DentiCode">
+          <div class="burbuja-cabeza">
+            <span class="avatar avatar-rosa" aria-hidden="true">LM</span>
+            <span><b>Lucía M.</b><small>23:47 · la clínica está cerrada</small></span>
+          </div>
+          <div class="burbuja-audio">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg>
+            <span class="onda" aria-hidden="true"></span>
+            <small>0:07</small>
+          </div>
+          <p class="burbuja-respuesta">Hola, Lucía. Siento la molestia. Mañana la Dra. Ruiz puede verte a las 9:30 o a las 12:00. ¿Cuál te queda mejor?</p>
+        </figure>
+      </div>
+
+      <div class="heroe-texto">
+        <p class="etiqueta revela">Administración profesional para clínicas dentales</p>
+        <h1 id="titulo-heroe" class="titular revela" aria-label="Tu clínica, en orden. De día y de noche.">
+          <span class="solo-escritorio" aria-hidden="true"><span>Tu clínica, en orden.</span><br><span class="tono-2">De día y de noche.</span></span>
+          <span class="solo-movil ajusta" aria-hidden="true">
+            <span class="linea">Tu clínica,</span>
+            <span class="linea">en orden.</span>
+            <span class="linea tono-2">De día y</span>
+            <span class="linea tono-2">de noche.</span>
+          </span>
+        </h1>
+        <p class="heroe-apoyo revela">Agenda, pacientes, tratamientos, cobros y caja en un solo panel para tu recepción. Y un asistente avanzado que contesta el WhatsApp de tu consultorio cuando no hay nadie y deja la cita en tu agenda.</p>
+        <div class="acciones revela">
+          <button class="boton boton-principal" type="button" data-abre="demo">Agendar una demo</button>
+          <a class="enlace" href="#tablero">Ver el panel</a>
+        </div>
+        <dl class="hechos revela">
+          <div><dt>Agenda</dt><dd>Por sillón, con confirmaciones y lista de espera</dd></div>
+          <div><dt>Cobros y caja</dt><dd>Abonos, medios de pago y corte del día</dd></div>
+          <div><dt>Pacientes</dt><dd>Tratamientos, saldos y próximas citas</dd></div>
+          <div><dt>Asistente avanzado</dt><dd>Contesta el WhatsApp aunque esté cerrado</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ── El tablero de la clínica: la única ventana oscura de la página ── -->
+    <section class="seccion tablero" id="tablero" aria-labelledby="titulo-tablero">
+      <p class="etiqueta revela">El panel de tu clínica</p>
+      <h2 id="titulo-tablero" class="titulo-seccion revela">Toda tu consulta en una pantalla. <span class="tono-2">Pagos, tratamientos y citas.</span></h2>
+
+      <div class="ventana revela" id="ventana">
+        <nav class="riel-app" role="tablist" aria-label="Vistas del panel" aria-orientation="vertical">
+          <span class="riel-logo"><img src="img/logo.svg" width="36" height="36" alt=""></span>
+          <button role="tab" type="button" data-v="inicio" aria-selected="true" aria-controls="v-inicio" aria-label="Hoy"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Hoy</span></button>
+          <button role="tab" type="button" data-v="agenda" aria-selected="false" tabindex="-1" aria-controls="v-agenda" aria-label="Agenda"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Agenda</span></button>
+          <button role="tab" type="button" data-v="pacientes" aria-selected="false" tabindex="-1" aria-controls="v-pacientes" aria-label="Pacientes"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15.5 19v-1a3.5 3.5 0 0 0-3.5-3.5H7.5A3.5 3.5 0 0 0 4 18v1M9.75 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6M20 19v-1a3.5 3.5 0 0 0-2.6-3.4M15.5 5.1a3 3 0 0 1 0 5.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Pacientes</span></button>
+          <button role="tab" type="button" data-v="pagos" aria-selected="false" tabindex="-1" aria-controls="v-pagos" aria-label="Pagos"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10.5h17M7.5 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Pagos</span></button>
+          <span class="riel-pie" aria-hidden="true"><span class="avatar avatar-lavanda">DR</span></span>
+        </nav>
+
+        <div class="app">
+          <header class="app-barra">
+            <p class="app-nombre">DentiCode <small>Clínica Dental Ruiz</small></p>
+            <p class="app-fecha" id="tb-fecha"></p>
+            <span class="app-iconos" aria-hidden="true">
+              <span class="icono-redondo"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+              <span class="avatar avatar-lavanda">DR</span>
+            </span>
+          </header>
+
+          <div class="app-vistas">
+            <section class="tb-vista" id="v-inicio" role="tabpanel" data-vista="inicio" data-activa aria-label="Hoy">
+              <div class="saludo">
+                <div class="saludo-texto">
+                  <h3>Buenos días, Carmen.</h3>
+                  <p id="saludo-sub"></p>
+                </div>
+                <dl class="cifras-grandes">
+                  <div><dt>Cobrado hoy</dt><dd><span id="kpi-cobrado"></span><svg class="flecha" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></dd></div>
+                  <div><dt>Confirmadas hoy</dt><dd><span id="kpi-conf"></span><svg class="flecha" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></dd></div>
+                </dl>
+                <button class="boton boton-principal boton-mas" type="button" id="tb-registrar">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span class="caras"><span data-activa>Registrar pago</span><span>Registrando…</span></span>
+                </button>
+              </div>
+
+              <div class="bento">
+                <article class="tarjeta-app asistente" aria-label="Chat con Denti">
+                  <header class="asistente-cabeza">
+                    <span class="mini-pestanas" aria-hidden="true">
+                      <span class="icono-redondo"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 9.5a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9v.7M12 15.5v.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span>
+                      <span class="icono-redondo activo"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6a2.5 2.5 0 0 1-2.5 2.5H11l-4 3.5V15A2.5 2.5 0 0 1 5 12.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
+                      <span class="icono-redondo"><svg viewBox="0 0 24 24" width="15" height="15"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3.5v2.5M12 18v2.5M3.5 12H6M18 12h2.5M6 6l1.8 1.8M16.2 16.2 18 18M6 18l1.8-1.8M16.2 7.8 18 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                    </span>
+                    <span class="asistente-cara"><img src="img/logo.svg" width="36" height="36" alt=""></span>
+                  </header>
+                  <p class="asistente-titulo"><b>Denti te pasó <span id="pendientes-n">2</span> conversaciones</b><small>Las demás las resolvió solo: 23 anoche</small></p>
+                  <ul class="asistente-chat" id="asistente-chat"></ul>
+                  <form class="asistente-campo" id="asistente-form">
+                    <label class="solo-lector" for="asistente-texto">Escribe a Denti</label>
+                    <input id="asistente-texto" placeholder="Responder a Mariana" autocomplete="off">
+                    <button type="submit" class="icono-redondo enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12h13M13 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  </form>
+                </article>
+
+                <article class="tarjeta-app linea-tiempo" aria-label="Agenda de hoy por sillón">
+                  <header class="tarjeta-cabeza"><div><h4>Agenda de hoy</h4><p>Dos sillones · 7 citas</p></div><span class="icono-redondo" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span></header>
+                  <div class="lt-marco" data-sangra><div class="lt" id="linea-tiempo"></div></div>
+                  <dl class="lt-estado" id="lt-estado"></dl>
+                </article>
+
+                <article class="tarjeta-app pagos-hoy" aria-label="Cobros de hoy">
+                  <header class="tarjeta-cabeza"><div><h4>Cobros de hoy</h4><p id="pagos-hoy-sub"></p></div><button class="icono-redondo" type="button" data-ir="pagos" aria-label="Ver todos los pagos"><svg class="flecha" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 11l6-6M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></header>
+                  <ul class="pagos-lista" id="pagos-hoy"></ul>
+                </article>
+
+                <article class="tarjeta-app tb-manana" aria-label="Citas de mañana por confirmar">
+                  <header class="tarjeta-cabeza"><div><h4>Mañana</h4><p id="manana-sub"></p></div></header>
+                  <ul class="manana-lista" id="manana-lista"></ul>
+                </article>
+
+                <article class="arte-anillos" aria-label="Caja de hoy por medio de pago">
+                  <p class="arte-titulo">Caja<br>de hoy</p>
+                  <ul class="capsula" id="capsula"></ul>
+                </article>
+              </div>
+            </section>
+
+            <section class="tb-vista" id="v-agenda" role="tabpanel" data-vista="agenda" aria-label="Agenda de la semana">
+              <div class="semana-cabeza">
+                <h3 id="semana-titulo"></h3>
+                <div class="filtros-pildora" id="filtro-sillon" role="group" aria-label="Filtrar por sillón">
+                  <button type="button" aria-pressed="true" data-s="todos">Todos</button>
+                  <button type="button" aria-pressed="false" data-s="1">Sillón 1</button>
+                  <button type="button" aria-pressed="false" data-s="2">Sillón 2</button>
+                </div>
+              </div>
+              <div class="semana-marco" data-sangra><div class="semana" id="semana"></div></div>
+              <p class="semana-leyenda"><span><i class="ley-lavanda"></i>Ortodoncia</span><span><i class="ley-cielo"></i>Tratamiento</span><span><i class="ley-lima"></i>Limpieza y valoración</span></p>
+            </section>
+
+            <section class="tb-vista" id="v-pacientes" role="tabpanel" data-vista="pacientes" aria-label="Pacientes">
+              <div class="vista-herramientas">
+                <label class="buscar-app">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  <span class="solo-lector">Buscar paciente</span>
+                  <input type="search" id="tb-buscar" placeholder="Buscar paciente" autocomplete="off">
+                </label>
+                <p class="vista-resumen" id="pac-resumen"></p>
+              </div>
+              <div class="tarjeta-app lista-app" id="tb-pacientes"></div>
+            </section>
+
+            <section class="tb-vista" id="v-pagos" role="tabpanel" data-vista="pagos" aria-label="Pagos">
+              <div class="vista-herramientas">
+                <div class="filtros-pildora" id="tb-medios" role="group" aria-label="Filtrar por medio de pago"></div>
+                <p class="vista-resumen" id="tb-total"></p>
+              </div>
+<article class="tarjeta-app resumen-curva" aria-label="Ingresos de los últimos 14 días">
+                <header class="tarjeta-cabeza"><div><h4>Ingresos</h4><p>Últimos 14 días</p></div></header>
+                <div class="curva" id="curva"></div>
+              </article>
+              <div class="tarjeta-app lista-app" id="tb-pagos"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <p class="tablero-nota revela">Datos de ejemplo. En la versión real, cada clínica ve solo sus pacientes, con acceso por persona y la información cifrada.</p>
+    </section>
+
+    <!-- ── Una noche: la cadena de causa y consecuencia ── -->
+    <section class="seccion noche" id="noche" aria-labelledby="titulo-noche">
+      <div class="panel noche-panel">
+        <div class="noche-texto">
+          <p class="etiqueta revela">Asistente avanzado · una noche cualquiera</p>
+          <h2 id="titulo-noche" class="titulo-seccion revela">23:47. La recepción cerró hace cuatro horas.</h2>
+          <p class="cuerpo revela">Lucía manda un audio con dolor de muela. Esto es lo que pasa en los siguientes 44 segundos.</p>
+          <ol class="pasos" id="pasos">
+            <li><time>23:47:04</time><span><b>Llega el audio</b><small>Lucía M. · 0:07</small></span></li>
+            <li><time>23:47:06</time><span><b>Lo transcribe</b><small>«Me duele mucho una muela…»</small></span></li>
+            <li><time>23:47:21</time><span><b>Revisa tu agenda</b><small>Mañana: 9:30 y 12:00 libres</small></span></li>
+            <li><time>23:47:32</time><span><b>Le ofrece dos horarios</b><small>Con tu tono, no con menús</small></span></li>
+            <li><time>23:47:40</time><span><b>Lucía elige</b><small>«La de 9:30, gracias»</small></span></li>
+            <li><time>23:47:48</time><span><b>Crea la cita y guarda la ficha</b><small>Te lo cuenta a las 8:00</small></span></li>
+          </ol>
+          <button class="boton boton-secundario" type="button" id="repetir">
+            <span class="caras"><span data-activa>Repetir la noche</span><span>Repitiendo…</span></span>
+          </button>
+        </div>
+
+        <div class="chat tarjeta" id="chat" aria-live="polite">
+          <div class="chat-cabeza">
+            <span class="avatar avatar-rosa" aria-hidden="true">LM</span>
+            <span><b>Lucía M.</b><small id="chat-estado">en línea</small></span>
+          </div>
+          <div class="chat-cuerpo">
+            <div class="msg msg-entra" data-paso="0">
+              <span class="burbuja-audio">
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg>
+                <span class="onda" aria-hidden="true"></span>
+                <small>0:07</small>
+              </span>
+              <time>23:47</time>
+            </div>
+            <p class="msg-nota" data-paso="1">Transcripción: «Hola, me duele mucho una muela, ¿tienen algo para mañana?»</p>
+            <p class="msg-nota" data-paso="2">Agenda de la Dra. Ruiz, miércoles: 9:30 y 12:00 libres</p>
+            <div class="msg msg-sale" data-paso="3">
+              <p>Hola, Lucía. Siento la molestia. Mañana la Dra. Ruiz puede verte a las 9:30 o a las 12:00. ¿Cuál te queda mejor?</p>
+              <span class="horarios"><span>9:30</span><span>12:00</span></span>
+              <time>23:47</time>
+            </div>
+            <div class="msg msg-entra" data-paso="4"><p>La de 9:30, gracias</p><time>23:47</time></div>
+            <div class="msg msg-sale" data-paso="5">
+              <p>Listo. Te esperamos mañana a las 9:30. Te mando la ubicación: Cra. 15 #93-47, consultorio 302, Bogotá.</p>
+              <time>23:47</time>
+            </div>
+            <p class="msg-sistema" data-paso="5">
+              <svg class="trazo" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path pathLength="1" d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Cita creada · Ficha guardada
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── La mañana: el resumen que recibe la doctora ── -->
+    <section class="seccion manana" id="manana" aria-labelledby="titulo-manana">
+      <div class="manana-texto">
+        <p class="etiqueta revela">08:00</p>
+        <h2 id="titulo-manana" class="titulo-seccion revela">Llegas y la agenda ya está hecha.</h2>
+        <p class="cuerpo revela">Cada mañana recibes un mensaje con lo que pasó de noche: quién escribió, a qué hora viene y qué necesita. Lo que no supo resolver te espera arriba de todo.</p>
+      </div>
+
+      <article class="resumen tarjeta revela" aria-label="Resumen de la mañana para la Dra. Ruiz">
+        <header class="resumen-cabeza">
+          <img src="img/logo.svg" width="32" height="32" alt="">
+          <span><b>DentiCode</b><small>para Dra. Ruiz · 08:00</small></span>
+        </header>
+        <p class="resumen-saludo">Buenos días, Dra. Ruiz. Anoche agendé</p>
+        <p class="cifra-grande"><span id="cifra-pacientes">0</span> <span class="cifra-unidad">pacientes nuevos</span></p>
+        <ul class="filas">
+          <li><time>09:30</time><span><b>Lucía Méndez</b><small>Dolor de muela, desde ayer</small></span><span class="chip chip-durazno">Urgencia</span></li>
+          <li><time>11:00</time><span><b>Jorge Paredes</b><small>Limpieza, paciente de 2024</small></span></li>
+          <li><time>16:30</time><span><b>Ana Gutiérrez</b><small>Valoración de ortodoncia</small></span></li>
+        </ul>
+        <p class="resumen-pendiente"><b>1 conversación para ti.</b> Mariana pregunta por el precio de unas carillas; no le di cifra.</p>
+      </article>
+    </section>
+
+    <!-- ── Qué responde y qué no ── -->
+    <section class="seccion responde" id="responde" aria-labelledby="titulo-responde">
+      <p class="etiqueta revela">Qué responde</p>
+      <h2 id="titulo-responde" class="titulo-seccion revela">No es un bot de menús. <span class="tono-2">Tampoco inventa.</span></h2>
+      <p class="cuerpo revela">Contesta con la información que tú le das: tus servicios, tus horarios, tus precios aprobados. Lo que no sabe no lo adivina; se lo pasa a tu equipo con la conversación completa.</p>
+      <div class="listas">
+        <div class="revela">
+          <h3>Lo resuelve solo</h3>
+          <ul class="lista">
+            <li><b>Horarios, dirección y cómo llegar</b><small>Con la ubicación en el chat</small></li>
+            <li><b>Servicios y rangos de precio</b><small>Solo los que tú apruebas</small></li>
+            <li><b>Audios y fotos</b><small>Entiende lo que le mandan, como una persona</small></li>
+            <li><b>Citas, cambios y cancelaciones</b><small>Sin empalmes con tu agenda</small></li>
+            <li><b>Recordatorio un día antes</b><small>Y libera el horario si no confirman</small></li>
+          </ul>
+        </div>
+        <div class="revela">
+          <h3>Te lo pasa a ti</h3>
+          <ul class="lista">
+            <li><b>Dolor fuerte, sangrado o hinchazón</b><small>Aviso inmediato al doctor de guardia</small></li>
+            <li><b>Presupuestos de tratamiento</b><small>Las carillas no se cotizan por chat</small></li>
+            <li><b>Preguntas médicas</b><small>No diagnostica ni receta</small></li>
+            <li><b>Quejas</b><small>Las atiende alguien de tu equipo</small></li>
+            <li><b>Todo lo que no está en tu información</b><small>Prefiere decir «te confirmo mañana»</small></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── La aclaración ── -->
+    <section class="seccion aclaracion" aria-labelledby="titulo-aclaracion">
+      <h2 id="titulo-aclaracion" class="frase revela">No viene a quitarle el trabajo a nadie. <span class="tono-2">Viene a contestar cuando no hay nadie.</span></h2>
+      <p class="cuerpo revela">Tu recepcionista sigue en el mismo WhatsApp, ve cada conversación y llega con la agenda ordenada. Menos mensajes perdidos, más pacientes que sí llegan a la silla.</p>
+    </section>
+
+    <!-- ── El ciclo del paciente: un índice que se despliega y un solo escenario ── -->
+    <section class="seccion ciclo" id="ciclo" aria-labelledby="titulo-ciclo">
+      <p class="etiqueta revela">Más allá de la noche</p>
+      <h2 id="titulo-ciclo" class="titulo-seccion revela">Acompaña a cada paciente. <span class="tono-2">De una cita a la siguiente.</span></h2>
+
+      <div class="ciclo-cuerpo">
+        <ol class="indice revela" role="tablist" aria-orientation="vertical" aria-label="Momentos del paciente">
+          <li data-activo>
+            <button role="tab" id="tab-ficha" aria-controls="panel-ficha" aria-selected="true">
+              <span class="indice-cuando">01 · Antes de la cita</span>
+              <span class="indice-nombre">Ficha previa</span>
+            </button>
+            <div class="detalle" id="detalle-ficha"><div>
+              <p>Al confirmar la cita pide el motivo, fotos, alergias y medicamentos, sobre todo anticoagulantes. La doctora llega con la ficha completa y gana minutos de sillón.</p>
+              <p class="necesita"><b>Necesita</b> <span>Nada más: lo pregunta en el mismo chat.</span></p>
+            </div></div>
+          </li>
+          <li>
+            <button role="tab" id="tab-silla" aria-controls="panel-silla" aria-selected="false" tabindex="-1">
+              <span class="indice-cuando">02 · El día de la cita</span>
+              <span class="indice-nombre">Silla vacía</span>
+            </button>
+            <div class="detalle" id="detalle-silla"><div>
+              <p>Confirma un día antes. Si alguien cancela o no contesta, ofrece el horario a quien estaba en lista de espera y vuelve a llenar la silla.</p>
+              <p class="necesita"><b>Necesita</b> <span>Acceso a tu agenda.</span></p>
+            </div></div>
+          </li>
+          <li>
+            <button role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="false" tabindex="-1">
+              <span class="indice-cuando">03 · Tras la consulta</span>
+              <span class="indice-nombre">Presupuesto</span>
+            </button>
+            <div class="detalle" id="detalle-plan"><div>
+              <p>A quien se fue con un presupuesto de implante, ortodoncia o carillas le escribe a los pocos días, resuelve dudas y le ofrece revisar las opciones de pago contigo.</p>
+              <p class="necesita"><b>Necesita</b> <span>Tu lista de presupuestos entregados.</span></p>
+            </div></div>
+          </li>
+          <li>
+            <button role="tab" id="tab-resena" aria-controls="panel-resena" aria-selected="false" tabindex="-1">
+              <span class="indice-cuando">04 · Al salir</span>
+              <span class="indice-nombre">Reseña</span>
+            </button>
+            <div class="detalle" id="detalle-resena"><div>
+              <p>Después de una cita que salió bien, pide la reseña con el enlace directo. Si algo salió mal, no la pide: le avisa a tu equipo.</p>
+              <p class="necesita"><b>Necesita</b> <span>El enlace de tu perfil de Google.</span></p>
+            </div></div>
+          </li>
+          <li>
+            <button role="tab" id="tab-dormido" aria-controls="panel-dormido" aria-selected="false" tabindex="-1">
+              <span class="indice-cuando">05 · Un año después</span>
+              <span class="indice-nombre">Paciente dormido</span>
+            </button>
+            <div class="detalle" id="detalle-dormido"><div>
+              <p>A quien no viene desde hace un año le escribe con su nombre y su último tratamiento. Con una lista acotada: WhatsApp cobra cada uno de estos mensajes.</p>
+              <p class="necesita"><b>Necesita</b> <span>Tu lista de pacientes con su última visita.</span></p>
+            </div></div>
+          </li>
+        </ol>
+
+        <div class="escenario revela" id="escenario">
+          <div class="momento" role="tabpanel" id="panel-ficha" aria-labelledby="tab-ficha" aria-describedby="detalle-ficha" data-activo>
+              <div class="ficha tarjeta">
+                <p class="ficha-titulo">Ficha · Lucía Méndez</p>
+                <dl>
+                  <div class="aparece" style="--r:150ms"><dt>Motivo</dt><dd>Dolor en muela inferior derecha, 3 días</dd></div>
+                  <div class="aparece" style="--r:450ms"><dt>Alergias</dt><dd><span class="chip chip-durazno">Penicilina</span></dd></div>
+                  <div class="aparece" style="--r:750ms"><dt>Medicamentos</dt><dd>Ninguno</dd></div>
+                  <div class="aparece" style="--r:1050ms"><dt>Fotos</dt><dd class="fotos"><span></span><span></span></dd></div>
+                </dl>
+                <p class="ficha-lista aparece" style="--r:1450ms">
+                  <svg class="trazo" viewBox="0 0 16 16" width="14" height="14"><path pathLength="1" d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Lista para la Dra. Ruiz
+                </p>
+              </div>
+          </div>
+          <div class="momento" role="tabpanel" id="panel-silla" aria-labelledby="tab-silla" aria-describedby="detalle-silla">
+              <div class="mini-agenda tarjeta">
+                <p class="mini-titulo">Jueves 13</p>
+                <div class="hueco"><time>11:00</time><span class="hueco-ocupado">Rodrigo S. · Resina</span></div>
+                <div class="hueco"><time>12:00</time>
+                  <span class="caras hueco-relevo" id="hueco-relevo"><span data-activa class="hueco-cancela">Paola V. canceló</span><span class="hueco-nuevo">Marco T. · Limpieza</span></span>
+                </div>
+                <div class="hueco"><time>12:30</time><span class="hueco-ocupado">Elena C. · Valoración</span></div>
+                <p class="estado aparece" style="--r:1700ms"><span class="punto punto-ok"></span>Marco aceptó a los 6 min de la lista de espera</p>
+              </div>
+          </div>
+          <div class="momento" role="tabpanel" id="panel-plan" aria-labelledby="tab-plan" aria-describedby="detalle-plan">
+              <div class="mini-chat">
+                <p class="planes aparece" style="--r:100ms"><span>Planes sin respuesta</span><b>4 pacientes · $ 18.600.000</b></p>
+                <p class="msg msg-sale aparece" style="--r:500ms">Hola, Roberto. ¿Pudiste revisar el plan de tu implante? Si te ayuda, la Dra. Ruiz puede verte para revisar el pago a cuotas.</p>
+                <p class="msg msg-entra aparece" style="--r:1300ms">Sí, me interesa a cuotas</p>
+                <p class="estado aparece" style="--r:1500ms"><span class="punto punto-ok"></span>Revisión de plan: jueves 10:00</p>
+              </div>
+          </div>
+          <div class="momento" role="tabpanel" id="panel-resena" aria-labelledby="tab-resena" aria-describedby="detalle-resena">
+              <div class="mini-chat">
+                <p class="msg msg-sale aparece" style="--r:150ms">Gracias por venir hoy, Jorge. Si te atendimos bien, ¿nos dejas una reseña? Te toma un minuto.</p>
+                <p class="msg msg-entra aparece" style="--r:900ms">Listo, ya la dejé</p>
+                <div class="perfil tarjeta aparece" style="--r:1100ms">
+                  <span><b>Clínica Dental Ruiz</b><small>Perfil de Google</small></span>
+                  <span class="perfil-cifra"><b>4,9</b><small><span id="cifra-resenas">211</span> reseñas</small></span>
+                </div>
+              </div>
+          </div>
+          <div class="momento" role="tabpanel" id="panel-dormido" aria-labelledby="tab-dormido" aria-describedby="detalle-dormido">
+              <div class="mini-chat">
+                <p class="planes aparece" style="--r:100ms"><span>Sin visita desde noviembre de 2025</span><b>38 pacientes</b></p>
+                <p class="msg msg-sale aparece" style="--r:500ms">Hola, Ana. Hace un año de tu última limpieza con la Dra. Ruiz. ¿Te aparto un horario la próxima semana?</p>
+                <p class="msg msg-entra aparece" style="--r:1300ms">Sí, el martes en la tarde</p>
+                <p class="estado aparece" style="--r:1500ms"><span class="punto punto-ok"></span>Limpieza: martes 17:30</p>
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Piloto ── -->
+    <section class="seccion piloto" id="piloto" aria-labelledby="titulo-piloto">
+      <div class="panel piloto-panel">
+        <div class="piloto-texto">
+          <p class="etiqueta revela">Piloto de 30 días</p>
+          <h2 id="titulo-piloto" class="titulo-seccion revela">Pruébalo un mes en tu clínica.</h2>
+          <p class="cuerpo revela">Con tu agenda, tus pacientes y tu mismo número de WhatsApp. Al final del mes ves cuánto cobraste, cuántas citas se llenaron de noche y decides.</p>
+          <button class="boton boton-principal revela" type="button" data-abre="demo">Agendar una demo</button>
+        </div>
+        <ol class="lista lista-numerada revela">
+          <li><b>Nos cuentas cómo trabaja tu clínica</b><small>Horarios, servicios, precios que sí se dicen y quién atiende urgencias</small></li>
+          <li><b>Lo conectamos a tu WhatsApp Business</b><small>En una tarde, sin perder tus chats</small></li>
+          <li><b>Lo pruebas 30 días</b><small>Revisamos juntos las conversaciones cada semana</small></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <a class="marca-dc" href="#" aria-label="DentiCode, inicio">
+      <img src="img/logo.svg" width="32" height="32" alt="">
+      <span>DentiCode</span>
+    </a>
+    <p>Administración profesional para clínicas dentales.</p>
+    <p class="pie-nota">Los datos de tus pacientes se usan solo para atenderlos. Aviso de privacidad incluido en el piloto.</p>
+  </footer>
+
+  <!-- ── Denti: la muela del logo, con cara. Cambia de gesto según lo que se está leyendo ── -->
+  <button class="denti" type="button" id="denti" aria-label="Denti, el asistente avanzado de DentiCode. Toca para saludar.">
+    <svg class="denti-svg" viewBox="13 4 38 57" aria-hidden="true">
+      <defs>
+        <linearGradient id="dn-cuerpo" x1="20" y1="6" x2="44" y2="56" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#E6F5FF"/><stop offset=".45" stop-color="#8FD0FA"/><stop offset="1" stop-color="#1D8FD8"/>
+        </linearGradient>
+        <radialGradient id="dn-luz" cx="27" cy="13" r="16" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="32" cy="57.6" rx="11" ry="2.2" fill="#0A3A5E" opacity=".18"/>
+      <g class="denti-cuerpo" id="denti-cuerpo">
+        <path d="M32 8.8C33.4 8.8 34.6 7.5 37 7.5C41 7.5 45 10 45 15C45 21 43 24.5 42 29.5C41 35.5 40.8 44 39 50.5C38 54.3 34.4 54.3 34 50.3L34.1 41.7C33.8 38.9 30.2 38.9 29.9 41.7L30 50.3C29.6 54.3 26 54.3 25 50.5C23.2 44 23 35.5 22 29.5C21 24.5 19 21 19 15C19 10 23 7.5 27 7.5C29.4 7.5 30.6 8.8 32 8.8Z" fill="url(#dn-cuerpo)"/>
+        <path d="M32 8.8C33.4 8.8 34.6 7.5 37 7.5C41 7.5 45 10 45 15C45 21 43 24.5 42 29.5C41 35.5 40.8 44 39 50.5C38 54.3 34.4 54.3 34 50.3L34.1 41.7C33.8 38.9 30.2 38.9 29.9 41.7L30 50.3C29.6 54.3 26 54.3 25 50.5C23.2 44 23 35.5 22 29.5C21 24.5 19 21 19 15C19 10 23 7.5 27 7.5C29.4 7.5 30.6 8.8 32 8.8Z" fill="url(#dn-luz)"/>
+        <path d="M32 8.8C33.4 8.8 34.6 7.5 37 7.5C41 7.5 45 10 45 15C45 21 43 24.5 42 29.5C41 35.5 40.8 44 39 50.5C38 54.3 34.4 54.3 34 50.3L34.1 41.7C33.8 38.9 30.2 38.9 29.9 41.7L30 50.3C29.6 54.3 26 54.3 25 50.5C23.2 44 23 35.5 22 29.5C21 24.5 19 21 19 15C19 10 23 7.5 27 7.5C29.4 7.5 30.6 8.8 32 8.8Z" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/>
+        <path d="M22.6 14c.4-2.6 2.4-4 4.8-4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <g fill="#0A3A5E" stroke="#0A3A5E" stroke-linecap="round" stroke-linejoin="round">
+          <g class="cara" data-cara="feliz" data-activa>
+            <ellipse class="ojo" cx="27.5" cy="19.5" rx="1.5" ry="2.1" stroke="none"/><ellipse class="ojo" cx="36.5" cy="19.5" rx="1.5" ry="2.1" stroke="none"/>
+            <path d="M29.2 24.4q2.8 2.4 5.6 0" fill="none" stroke-width="1.4"/>
+          </g>
+          <g class="cara" data-cara="contento">
+            <path d="M25.8 20.2q1.7-2.2 3.4 0M34.8 20.2q1.7-2.2 3.4 0" fill="none" stroke-width="1.4"/>
+            <path d="M28.6 23.6h6.8q-.4 3.6-3.4 3.6t-3.4-3.6Z" stroke-width=".6"/>
+            <ellipse cx="24.6" cy="23.4" rx="1.8" ry="1" fill="#F2A3B5" stroke="none" opacity=".7"/><ellipse cx="39.4" cy="23.4" rx="1.8" ry="1" fill="#F2A3B5" stroke="none" opacity=".7"/>
+          </g>
+          <g class="cara" data-cara="sorpresa">
+            <ellipse class="ojo" cx="27.5" cy="19" rx="1.9" ry="2.5" stroke="none"/><ellipse class="ojo" cx="36.5" cy="19" rx="1.9" ry="2.5" stroke="none"/>
+            <ellipse cx="32" cy="25.4" rx="1.4" ry="1.7" stroke="none"/>
+          </g>
+          <g class="cara" data-cara="pensando">
+            <ellipse class="ojo" cx="28.4" cy="18.2" rx="1.4" ry="1.9" stroke="none"/><ellipse class="ojo" cx="37.4" cy="18.2" rx="1.4" ry="1.9" stroke="none"/>
+            <path d="M29.6 25.3l4.8-.7" fill="none" stroke-width="1.4"/>
+          </g>
+          <g class="cara" data-cara="serio">
+            <path d="M25.4 15.6l3.8 1.1M38.6 15.6l-3.8 1.1" fill="none" stroke-width="1.2"/>
+            <ellipse class="ojo" cx="27.5" cy="19.6" rx="1.5" ry="1.9" stroke="none"/><ellipse class="ojo" cx="36.5" cy="19.6" rx="1.5" ry="1.9" stroke="none"/>
+            <path d="M29.4 25.6q2.6-1.4 5.2 0" fill="none" stroke-width="1.4"/>
+          </g>
+          <g class="cara" data-cara="guino">
+            <path d="M25.8 19.8q1.7 1.2 3.4 0" fill="none" stroke-width="1.4"/>
+            <ellipse class="ojo" cx="36.5" cy="19.5" rx="1.5" ry="2.1" stroke="none"/>
+            <path d="M29 24.2q3 2.8 6 0" fill="none" stroke-width="1.4"/>
+          </g>
+          <g class="cara" data-cara="leyendo">
+            <ellipse class="ojo" cx="27.2" cy="20.6" rx="1.4" ry="1.5" stroke="none"/><ellipse class="ojo" cx="36.2" cy="20.6" rx="1.4" ry="1.5" stroke="none"/>
+            <path d="M30.4 25.2h3.2" fill="none" stroke-width="1.4"/>
+          </g>
+          <g class="cara" data-cara="dormido">
+            <path d="M25.8 19.6q1.7 1.2 3.4 0M34.8 19.6q1.7 1.2 3.4 0" fill="none" stroke-width="1.4"/>
+            <path d="M30.8 25.2h2.4" fill="none" stroke-width="1.4"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </button>
+  <p class="denti-globo" id="denti-globo" aria-hidden="true"></p>
+
+  <!-- ── Barra del pulgar (móvil) ── -->
+  <div class="barra" role="region" aria-label="Acciones">
+    <button class="boton boton-secundario" type="button" data-abre="menu" aria-haspopup="dialog">Menú</button>
+    <button class="boton boton-principal" type="button" data-abre="demo">Agendar una demo</button>
+  </div>
+
+  <!-- ── Menú (hoja desde abajo) ── -->
+  <dialog class="hoja" id="menu" aria-label="Menú">
+    <span class="asa" aria-hidden="true"></span>
+    <nav aria-label="Secciones">
+      <a href="#tablero">Panel</a>
+      <a href="#noche">Asistente</a>
+      <a href="#ciclo">Funciones</a>
+      <a href="#piloto">Piloto</a>
+    </nav>
+    <button class="boton boton-secundario" type="button" data-cierra>Cerrar</button>
+  </dialog>
+
+  <!-- ── Demo: la acción clave ── -->
+  <dialog class="hoja hoja-demo" id="demo" aria-labelledby="titulo-demo">
+    <span class="asa" aria-hidden="true"></span>
+    <form id="form-demo" novalidate>
+      <h2 id="titulo-demo">Agenda una demo</h2>
+      <p class="cuerpo">Te escribimos por WhatsApp para enseñarte una noche real con la información de tu clínica.</p>
+      <label class="campo"><span>Tu nombre</span><input name="nombre" autocomplete="name" required></label>
+      <label class="campo"><span>Clínica</span><input name="clinica" autocomplete="organization" required></label>
+      <label class="campo"><span>Ciudad</span><input name="ciudad" autocomplete="address-level2" required></label>
+      <label class="campo"><span>WhatsApp</span><input name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required placeholder="300 123 4567"><small class="campo-error" hidden>Escribe 10 dígitos para poder contactarte.</small></label>
+      <div class="demo-acciones">
+        <button class="boton boton-principal" type="submit">
+          <span class="caras">
+            <span data-activa>Pedir la demo</span>
+            <span>Enviando…</span>
+            <span><svg class="marca" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path pathLength="1" d="M3.5 8.5l3 3 6-7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Listo</span>
+          </span>
+        </button>
+        <button class="boton boton-secundario" type="button" data-cierra>Ahora no</button>
+      </div>
+      <p class="demo-gracias" hidden>Abrimos WhatsApp con tus datos. Te contestamos el mismo día.</p>
+    </form>
+  </dialog>
+
+  <script src="tacto.js"></script>
+  <script src="app.js" defer></script>
+  <script src="personaje.js" defer></script>
+  <script src="tablero.js" defer></script>
+  <script type="module">
+    if (!document.documentElement.classList.contains('solo-panel')) import('./muela.js');
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "titulo": "DentiCode · lanzamiento",
+  "formato": {
+    "ancho": 1080,
+    "alto": 1920,
+    "fps": 30,
+    "duracionMinima": 45
+  },
+  "escenas": [
+    {
+      "id": "gancho",
+      "voz": "Son las once y cuarenta y siete de la noche. La clínica está cerrada, y Lucía tiene dolor de muela.",
+      "subtitulo": "23:47. La clínica está cerrada… y Lucía tiene dolor de muela."
+    },
+    {
+      "id": "marca",
+      "voz": "Esto es DentiCode: tu clínica, en orden. De día y de noche.",
+      "subtitulo": "Esto es DentiCode. Tu clínica, en orden. De día y de noche."
+    },
+    {
+      "id": "asistente",
+      "voz": "El asistente avanzado contesta tu WhatsApp, entiende audios y deja la cita en tu agenda.",
+      "subtitulo": "Contesta tu WhatsApp, entiende audios y deja la cita en tu agenda."
+    },
+    {
+      "id": "panel",
+      "voz": "A las ocho, recepción encuentra todo listo: agenda por sillón, cobros, caja y pacientes, en una sola pantalla.",
+      "subtitulo": "Agenda por sillón, cobros, caja y pacientes. En una sola pantalla."
+    },
+    {
+      "id": "ciclo",
+      "voz": "Llena las sillas vacías, sigue los presupuestos y trae de vuelta a quienes no volvieron.",
+      "subtitulo": "Llena sillas vacías, sigue presupuestos y trae de vuelta a quienes no volvieron."
+    },
+    {
+      "id": "datos",
+      "voz": "Y los datos de tus pacientes, protegidos como exige la ley.",
+      "subtitulo": "Los datos de tus pacientes, protegidos como exige la ley."
+    },
+    {
+      "id": "cierre",
+      "voz": "DentiCode. Pruébalo un mes en tu clínica.",
+      "subtitulo": ""
+    }
+  ]
+}

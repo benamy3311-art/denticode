@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Diagnóstico DentiCode</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="tacto.css">
+  <link rel="stylesheet" href="diagnostico.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+</head>
+<body>
+<div class="diag">
+  <header class="diag-cabeza">
+    <span class="marca-dc"><img src="logo.svg" width="32" height="32" alt=""><span>DentiCode</span></span>
+    <span class="sello">Diagnóstico de la clínica</span>
+  </header>
+
+  <main>
+    <section class="apertura">
+      <p class="etiqueta">Para la reunión con el doctor</p>
+      <h1>¿Cuántos pacientes se le van por no contestar a tiempo?</h1>
+      <p class="cuerpo">Con los chats de WhatsApp de la clínica, este diagnóstico cuenta las consultas que llegan fuera de horario, cuánto tardan en contestarse y cuántas se quedan sin respuesta. Después suma lo que dejan los presupuestos sin aceptar y los pacientes que no vuelven.</p>
+      <p class="privado"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        Los chats se leen en este computador y no se envían a ningún lado. Hazlo en el computador de la clínica y con su permiso: los datos son de sus pacientes. El resultado solo muestra totales, nunca nombres ni teléfonos.</p>
+    </section>
+
+    <!-- ── Paso 1 ── -->
+    <section class="paso" aria-labelledby="t-paso1">
+      <header class="paso-cabeza"><span class="paso-n">1</span><h2 id="t-paso1">La clínica</h2></header>
+      <div class="campos">
+        <label class="campo"><span>Nombre de la clínica</span><input id="c-nombre" value="Clínica Dental Ruiz" autocomplete="organization"></label>
+        <div class="campo"><span>Horario de lunes a viernes</span><div class="horario"><input id="c-lv-abre" type="time" value="08:00" aria-label="Abre de lunes a viernes"><span>a</span><input id="c-lv-cierra" type="time" value="19:00" aria-label="Cierra de lunes a viernes"></div></div>
+        <div class="campo"><span>Horario del sábado</span><div class="horario"><input id="c-sa-abre" type="time" value="08:00" aria-label="Abre el sábado"><span>a</span><input id="c-sa-cierra" type="time" value="13:00" aria-label="Cierra el sábado"></div><small>Deja vacío si no abre. El domingo cuenta como cerrado.</small></div>
+        <label class="campo"><span>Lo que deja un paciente nuevo</span><div class="con-prefijo"><b>$</b><input id="c-valor" inputmode="numeric" value="350.000"></div><small>Valoración más el primer tratamiento, en promedio.</small></label>
+        <label class="campo"><span>De los que esperan más de una hora, cuántos se van a otra clínica</span><div class="con-prefijo con-sufijo"><input id="c-perdida" inputmode="numeric" value="30"><b>%</b></div><small>Es un supuesto: ajústalo con el doctor.</small></label>
+      </div>
+    </section>
+
+    <!-- ── Paso 2 ── -->
+    <section class="paso" aria-labelledby="t-paso2">
+      <header class="paso-cabeza"><span class="paso-n">2</span><h2 id="t-paso2">Los chats</h2></header>
+      <details class="como">
+        <summary>Cómo exportar los chats de WhatsApp Business</summary>
+        <ol>
+          <li><b>Android:</b> abre el chat, toca los tres puntos, Más, Exportar chat, Sin archivos. Guárdalo o envíatelo al correo de la clínica.</li>
+          <li><b>iPhone:</b> abre el chat, toca el nombre del contacto, Exportar chat, Sin archivos, Guardar en Archivos. Sale un .zip: súbelo tal cual.</li>
+          <li>Exporta entre 30 y 50 chats recientes con pacientes. Más chats, mejor estimación.</li>
+          <li>Al terminar, borra los archivos exportados del computador.</li>
+        </ol>
+      </details>
+      <label class="soltar" id="soltar">
+        <input type="file" id="archivos" accept=".txt,.zip,text/plain,application/zip" multiple>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 15V4M7.5 8.5 12 4l4.5 4.5M5 15v3.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <b>Arrastra aquí los chats exportados</b>
+        <span>o toca para elegirlos · archivos .txt o .zip</span>
+      </label>
+      <div class="cargados">
+        <p id="estado-archivos">Todavía no hay chats. Puedes probar con el ejemplo para ver cómo queda.</p>
+        <button class="boton boton-secundario" type="button" id="ejemplo">Usar chats de ejemplo</button>
+      </div>
+      <label class="campo campo-quien" id="campo-quien" hidden><span>¿Cuál es el nombre de la clínica en estos chats?</span><select id="quien"></select><small>Elegimos el que aparece en más chats. Cámbialo si no es.</small></label>
+    </section>
+
+    <!-- ── Paso 3 ── -->
+    <section class="paso" aria-labelledby="t-paso3">
+      <header class="paso-cabeza"><span class="paso-n">3</span><h2 id="t-paso3">Lo que se queda sobre la mesa</h2></header>
+      <p class="paso-texto">Pregúntaselo a la recepcionista o sácalo de su programa de agenda. Si no lo saben, déjalo en cero.</p>
+      <div class="campos">
+        <label class="campo"><span>Presupuestos entregados y no aceptados, últimos 3 meses</span><input id="c-presupuestos" inputmode="numeric" value="0"></label>
+        <label class="campo"><span>Valor promedio de esos presupuestos</span><div class="con-prefijo"><b>$</b><input id="c-presupuesto-valor" inputmode="numeric" value="2.500.000"></div></label>
+        <label class="campo"><span>Pacientes que no vienen desde hace más de un año</span><input id="c-dormidos" inputmode="numeric" value="0"></label>
+        <label class="campo"><span>Cuántos se recuperarían con un mensaje</span><div class="con-prefijo con-sufijo"><input id="c-recupera" inputmode="numeric" value="10"><b>%</b></div><small>Supuesto conservador.</small></label>
+      </div>
+    </section>
+
+    <!-- ── Resultado ── -->
+    <section class="resultado" id="resultado" aria-labelledby="t-resultado" aria-live="polite">
+      <div class="resultado-cabeza">
+        <div>
+          <p class="etiqueta" id="r-periodo">Resultado</p>
+          <h2 id="t-resultado">Diagnóstico de <span id="r-clinica">la clínica</span></h2>
+        </div>
+        <button class="boton boton-secundario" type="button" id="imprimir">Imprimir o guardar en PDF</button>
+      </div>
+
+      <div class="vacio" id="r-vacio">
+        <p><b>Aquí aparece el diagnóstico</b> en cuanto subas chats o uses el ejemplo.</p>
+      </div>
+
+      <div id="r-contenido" hidden>
+        <p class="frase-reunion" id="r-frase"></p>
+
+        <dl class="cifras-r">
+          <div><dt>Consultas analizadas</dt><dd id="r-consultas"></dd><small id="r-consultas-nota"></small></div>
+          <div><dt>Llegaron fuera de horario</dt><dd id="r-fuera"></dd><small id="r-fuera-nota"></small></div>
+          <div><dt>Primera respuesta fuera de horario</dt><dd id="r-espera-fuera"></dd><small id="r-espera-dentro"></small></div>
+          <div><dt>Sin respuesta en 48 horas</dt><dd id="r-sin"></dd><small id="r-sin-nota"></small></div>
+        </dl>
+
+        <article class="tarjeta-r">
+          <header><h3>A qué hora escriben los pacientes</h3><p class="leyenda"><span><i class="ley-fuera"></i>Fuera de horario</span><span><i class="ley-dentro"></i>En horario</span></p></header>
+          <div class="horas" id="r-horas" role="img"></div>
+          <details class="tabla-datos"><summary>Ver como tabla</summary><div class="tabla-marco"><table id="r-horas-tabla"></table></div></details>
+        </article>
+
+        <div class="dos">
+          <article class="tarjeta-r">
+            <header><h3>Qué preguntan fuera de horario</h3></header>
+            <ul class="temas" id="r-temas"></ul>
+          </article>
+          <article class="tarjeta-r">
+            <header><h3>Qué día se acumulan</h3></header>
+            <ul class="temas" id="r-dias"></ul>
+          </article>
+        </div>
+
+        <article class="tarjeta-r dinero">
+          <header><h3>Lo que se pierde al mes, con estos supuestos</h3><p>Ajusta los valores de arriba y se recalcula.</p></header>
+          <ul class="cuentas">
+            <li><span><b>Consultas fuera de horario que esperaron más de una hora</b><small id="d-esperaron-nota"></small></span><em id="d-esperaron"></em></li>
+            <li><span><b>Pacientes que probablemente se fueron</b><small id="d-perdidos-nota"></small></span><em id="d-perdidos"></em></li>
+            <li><span><b>Por consultas sin contestar a tiempo</b><small>Pacientes perdidos por el valor de un paciente nuevo</small></span><em id="d-plata-chat"></em></li>
+            <li><span><b>Por presupuestos que nadie siguió</b><small id="d-presupuestos-nota"></small></span><em id="d-plata-presupuestos"></em></li>
+            <li><span><b>Por pacientes que no vuelven</b><small id="d-dormidos-nota"></small></span><em id="d-plata-dormidos"></em></li>
+            <li class="total"><span><b>Total al mes</b><small>Estimación, no promesa: sirve para conversar con números.</small></span><em id="d-total"></em></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <p class="pie-diag">Diagnóstico DentiCode · los cálculos usan la primera respuesta de la clínica a cada consulta nueva de un paciente. Una consulta nueva empieza cuando el paciente escribe después de 6 horas sin mensajes en ese chat; lo que responde dentro de la misma conversación cuenta como la misma consulta.</p>
+  </main>
+</div>
+
+<script src="tacto.js"></script>
+<script src="diagnostico.js" defer></script>
+</body>
+</html>

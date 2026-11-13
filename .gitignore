@@ -1,0 +1,12 @@
+# Privado: no se sube
+roadmap/
+gusto/
+.claude/
+# Pesado o regenerable
+node_modules/
+video/voz*/
+video/voces/*.mp3
+video/fotos/
+video/hoja*.png
+video/par.png
+.DS_Store

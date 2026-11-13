@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="a-fondo" x1="8" y1="0" x2="56" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5BC1F8"/><stop offset=".5" stop-color="#1DA1F2"/><stop offset="1" stop-color="#0A5994"/>
+    </linearGradient>
+    <linearGradient id="a-vidrio" x1="32" y1="8" x2="32" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity=".38"/>
+    </linearGradient>
+    <linearGradient id="a-canto" x1="18" y1="8" x2="46" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity=".25"/>
+    </linearGradient>
+    <filter id="a-sombra" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>
+    <clipPath id="a-azulejo"><rect width="64" height="64" rx="18"/></clipPath>
+    <!-- Muela simétrica respecto a x = 32: cada punto de la derecha tiene su espejo exacto a la izquierda -->
+    <path id="a-muela" d="M32 8.8C33.4 8.8 34.6 7.5 37 7.5C41 7.5 45 10 45 15C45 21 43 24.5 42 29.5C41 35.5 40.8 44 39 50.5C38 54.3 34.4 54.3 34 50.3L34.1 41.7C33.8 38.9 30.2 38.9 29.9 41.7L30 50.3C29.6 54.3 26 54.3 25 50.5C23.2 44 23 35.5 22 29.5C21 24.5 19 21 19 15C19 10 23 7.5 27 7.5C29.4 7.5 30.6 8.8 32 8.8Z"/>
+  </defs>
+  <g clip-path="url(#a-azulejo)">
+    <rect width="64" height="64" fill="url(#a-fondo)"/>
+    <path d="M21 0v64M32 0v64M43 0v64" stroke="#fff" stroke-opacity=".07" stroke-width="5"/>
+    <use href="#a-muela" fill="#05385F" opacity=".35" filter="url(#a-sombra)" transform="translate(0 3)"/>
+  </g>
+  <use href="#a-muela" fill="url(#a-vidrio)" stroke="url(#a-canto)" stroke-width="1"/>
+  <path d="M23.5 13.5c.4-2.2 2.2-3.3 4.2-3.3" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

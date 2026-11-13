@@ -1,0 +1,47 @@
+{
+  "texto": "Esto es DentiCode: tu clínica, en orden. De día y de noche. El asistente avanzado contesta tu WhatsApp y deja la cita en tu agenda.",
+  "voces": [
+    {
+      "id": "heUagVbSyc7SphaYWFT3",
+      "nombre": "Claudia Isabel",
+      "desc": "Cálida y elegante, narradora",
+      "archivo": "claudia-isabel.mp3"
+    },
+    {
+      "id": "HQkNMSvU4RYxL7ghM0Pa",
+      "nombre": "Vivi",
+      "desc": "Natural, tranquila y agradable",
+      "archivo": "vivi.mp3"
+    },
+    {
+      "id": "YyzMdrXIPdg4iUnQfJ1D",
+      "nombre": "Mariana",
+      "desc": "Paisa, cercana, como una amiga que recomienda",
+      "archivo": "mariana.mp3"
+    },
+    {
+      "id": "Pl8gaBI339vz0ZMPYu2b",
+      "nombre": "Laura",
+      "desc": "Profesional, cálida y expresiva",
+      "archivo": "laura.mp3"
+    },
+    {
+      "id": "O5vK5lCCO3YaRHACRZ0R",
+      "nombre": "Valeri",
+      "desc": "Joven, carismática y segura",
+      "archivo": "valeri.mp3"
+    },
+    {
+      "id": "XcQ409zkCPMHAX4HWhIa",
+      "nombre": "Adriana",
+      "desc": "Conversacional, de presentación comercial",
+      "archivo": "adriana.mp3"
+    },
+    {
+      "id": "vg8DM7RKx0OPGlUuUBPw",
+      "nombre": "Anie",
+      "desc": "Brillante y expresiva, para redes",
+      "archivo": "anie.mp3"
+    }
+  ]
+}

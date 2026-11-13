@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Voces para DentiCode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&family=Geist+Mono:wght@500&display=swap">
+  <style>
+    /* Sereno (GUSTO.md): lienzo gris frío, tarjetas blancas, un solo acento negro en lo que suena */
+    :root {
+      --lienzo: #E9EDF2; --tarjeta: #FFFFFF; --hundido: #F1F4F7; --pista: #CDD5DF;
+      --tinta: #14171A; --tinta-2: #4E5966; --tinta-3: #66717D; --linea: rgba(20,23,26,.08);
+      --azul: #1DA1F2; --menta: #CFEEDD; --menta-t: #1F5A3C;
+      --salida: cubic-bezier(.22, 1, .36, 1); --rebote: cubic-bezier(.34, 1.56, .64, 1);
+      --fuente: "Geist", system-ui, sans-serif; --mono: "Geist Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--lienzo); color: var(--tinta); font: 400 16px/1.5 var(--fuente); -webkit-font-smoothing: antialiased; }
+    main { max-width: 760px; margin: 0 auto; padding: 48px max(16px, env(safe-area-inset-right)) 80px max(16px, env(safe-area-inset-left)); }
+    .etiqueta { margin: 0; font: 500 13px var(--mono); color: var(--tinta-2); }
+    h1 { margin: 12px 0 0; font-size: clamp(36px, 7vw, 56px); line-height: 1.04; font-weight: 800; letter-spacing: -.04em; text-wrap: balance; }
+    .frase { margin: 20px 0 0; padding: 18px 22px; border-radius: 16px; background: var(--tarjeta); font-size: 17px; line-height: 1.5; color: var(--tinta-2); }
+    .frase b { color: var(--tinta); font-weight: 600; }
+    .voces { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 12px; }
+    .voz {
+      display: grid; grid-template-columns: 64px 1fr auto; gap: 8px 18px; align-items: center;
+      padding: 18px 20px; border-radius: 24px; background: var(--tarjeta);
+      transition: box-shadow 240ms ease-out, transform 360ms var(--salida);
+    }
+    .voz[data-elegida] { box-shadow: 0 0 0 2px var(--tinta); }
+    .tocar {
+      inline-size: 64px; block-size: 64px; border: 0; border-radius: 50%; background: var(--hundido); color: var(--tinta);
+      display: grid; place-items: center; cursor: pointer; grid-row: span 2;
+      transition: background-color 200ms ease-out, color 200ms ease-out, scale 360ms var(--salida);
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .tocar:active { scale: .94; transition-duration: 80ms; }
+    .voz[data-suena] .tocar { background: var(--tinta); color: #fff; }
+    .tocar svg { grid-area: 1 / 1; transition: opacity 150ms ease-out, scale 250ms var(--rebote), filter 150ms ease-out; }
+    .tocar .pausa { opacity: 0; scale: .4; filter: blur(4px); }
+    .voz[data-suena] .tocar .play { opacity: 0; scale: .4; filter: blur(4px); }
+    .voz[data-suena] .tocar .pausa { opacity: 1; scale: 1; filter: none; }
+    .nombre { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .nombre b { font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
+    .nombre small { font-size: 14px; color: var(--tinta-2); }
+    .avance { display: flex; align-items: center; gap: 12px; }
+    .pista { position: relative; flex: 1; block-size: 6px; border-radius: 3px; background: var(--hundido); overflow: hidden; cursor: pointer; }
+    .pista i { position: absolute; inset: 0 auto 0 0; inline-size: var(--p, 0%); background: var(--tinta); border-radius: 3px; }
+    .tiempo { font: 500 12px var(--mono); color: var(--tinta-3); font-variant-numeric: tabular-nums; min-inline-size: 38px; text-align: right; }
+    .elegir {
+      grid-row: span 2; min-block-size: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--hundido);
+      color: var(--tinta); font: 500 15px var(--fuente); cursor: pointer; white-space: nowrap;
+      transition: background-color 200ms ease-out, color 200ms ease-out, scale 360ms var(--salida);
+    }
+    .elegir:active { scale: .96; transition-duration: 80ms; }
+    .voz[data-elegida] .elegir { background: var(--tinta); color: #fff; }
+    :focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; }
+    .eleccion {
+      position: sticky; bottom: max(16px, env(safe-area-inset-bottom)); margin-top: 24px; padding: 16px 20px; border-radius: 20px;
+      background: var(--tinta); color: #fff; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+      opacity: 0; translate: 0 16px; filter: blur(2px); pointer-events: none;
+      transition: opacity 250ms ease-in, translate 250ms ease-in, filter 250ms ease-in;
+    }
+    .eleccion[data-abierta] { opacity: 1; translate: none; filter: none; pointer-events: auto; transition: opacity 350ms var(--salida), translate 480ms var(--rebote), filter 350ms var(--salida); }
+    .eleccion p { margin: 0; font-size: 15px; line-height: 1.4; }
+    .eleccion b { font-weight: 600; }
+    .eleccion code { font: 500 13px var(--mono); color: rgba(255,255,255,.75); }
+    .eleccion button { min-block-size: 40px; padding: 0 18px; border: 0; border-radius: 999px; background: #fff; color: var(--tinta); font: 500 14px var(--fuente); cursor: pointer; }
+    @media (max-width: 560px) {
+      .voz { grid-template-columns: 56px 1fr; }
+      .tocar { inline-size: 56px; block-size: 56px; }
+      .elegir { grid-row: auto; grid-column: 1 / -1; justify-self: stretch; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition-duration: 1ms !important; } }
+  </style>
+</head>
+<body>
+<main>
+  <p class="etiqueta">ElevenLabs · voces femeninas con acento colombiano</p>
+  <h1>Escucha y elige la voz de DentiCode.</h1>
+  <p class="frase">Las siete leen la misma frase del video: <b>«Esto es DentiCode: tu clínica, en orden. De día y de noche. El asistente avanzado contesta tu WhatsApp y deja la cita en tu agenda.»</b></p>
+  <ul class="voces" id="voces"></ul>
+  <div class="eleccion" id="eleccion" role="status" aria-live="polite">
+    <p>Elegiste <b id="eleccion-nombre"></b>. Escríbeme en el chat «elijo <span id="eleccion-corta"></span>» y rehago el video.<br><code id="eleccion-id"></code></p>
+    <button type="button" id="copiar">Copiar el ID de la voz</button>
+  </div>
+</main>
+<script>
+(() => {
+  'use strict';
+  const VOCES = [
+    { id: 'heUagVbSyc7SphaYWFT3', nombre: 'Claudia Isabel', desc: 'Cálida y elegante, narradora', archivo: 'claudia-isabel.mp3' },
+    { id: 'HQkNMSvU4RYxL7ghM0Pa', nombre: 'Vivi', desc: 'Natural, tranquila y agradable', archivo: 'vivi.mp3' },
+    { id: 'YyzMdrXIPdg4iUnQfJ1D', nombre: 'Mariana', desc: 'Paisa, cercana, como una amiga que recomienda', archivo: 'mariana.mp3' },
+    { id: 'Pl8gaBI339vz0ZMPYu2b', nombre: 'Laura', desc: 'Profesional, cálida y expresiva', archivo: 'laura.mp3' },
+    { id: 'O5vK5lCCO3YaRHACRZ0R', nombre: 'Valeri', desc: 'Joven, carismática y segura', archivo: 'valeri.mp3' },
+    { id: 'XcQ409zkCPMHAX4HWhIa', nombre: 'Adriana', desc: 'Conversacional, de presentación comercial', archivo: 'adriana.mp3' },
+    { id: 'vg8DM7RKx0OPGlUuUBPw', nombre: 'Anie', desc: 'Brillante y expresiva, para redes', archivo: 'anie.mp3' },
+  ];
+  const lista = document.getElementById('voces');
+  const mmss = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : '0:00';
+  const audios = [];
+
+  VOCES.forEach((v, i) => {
+    const li = document.createElement('li');
+    li.className = 'voz';
+    li.innerHTML = `
+      <button class="tocar" type="button" aria-label="Escuchar a ${v.nombre}">
+        <svg class="play" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+        <svg class="pausa" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="7" y="5.5" width="3.6" height="13" rx="1.2" fill="currentColor"/><rect x="13.4" y="5.5" width="3.6" height="13" rx="1.2" fill="currentColor"/></svg>
+      </button>
+      <span class="nombre"><b>${v.nombre}</b><small>${v.desc}</small></span>
+      <button class="elegir" type="button">Elegir esta</button>
+      <span class="avance"><span class="pista" role="slider" aria-label="Avance de ${v.nombre}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><i></i></span><span class="tiempo">0:00</span></span>`;
+    lista.append(li);
+    const audio = new Audio(v.archivo);
+    audio.preload = 'metadata';
+    audios.push(audio);
+    const pista = li.querySelector('.pista'), barra = pista.querySelector('i'), tiempo = li.querySelector('.tiempo');
+    audio.addEventListener('loadedmetadata', () => { tiempo.textContent = mmss(audio.duration); });
+    audio.addEventListener('timeupdate', () => {
+      const p = audio.duration ? audio.currentTime / audio.duration * 100 : 0;
+      barra.style.setProperty('--p', p + '%'); pista.setAttribute('aria-valuenow', Math.round(p));
+      tiempo.textContent = mmss(audio.paused && audio.currentTime === 0 ? audio.duration : audio.currentTime);
+    });
+    audio.addEventListener('play', () => li.setAttribute('data-suena', ''));
+    audio.addEventListener('pause', () => li.removeAttribute('data-suena'));
+    audio.addEventListener('ended', () => { audio.currentTime = 0; li.removeAttribute('data-suena'); });
+    li.querySelector('.tocar').addEventListener('click', () => {
+      // una sola voz a la vez
+      audios.forEach(a => { if (a !== audio) a.pause(); });
+      audio.paused ? audio.play() : audio.pause();
+    });
+    pista.addEventListener('click', e => {
+      const r = pista.getBoundingClientRect();
+      if (audio.duration) audio.currentTime = (e.clientX - r.left) / r.width * audio.duration;
+    });
+    li.querySelector('.elegir').addEventListener('click', () => elegir(i));
+  });
+
+  const caja = document.getElementById('eleccion');
+  function elegir(i) {
+    const v = VOCES[i];
+    [...lista.children].forEach((li, k) => li.toggleAttribute('data-elegida', k === i));
+    document.getElementById('eleccion-nombre').textContent = v.nombre;
+    document.getElementById('eleccion-corta').textContent = v.nombre.split(' ')[0];
+    document.getElementById('eleccion-id').textContent = 'ID: ' + v.id;
+    caja.setAttribute('data-abierta', '');
+    try { localStorage.setItem('denticode-voz', String(i)); } catch {}
+  }
+  document.getElementById('copiar').addEventListener('click', async e => {
+    const id = VOCES[[...lista.children].findIndex(li => li.hasAttribute('data-elegida'))]?.id;
+    if (!id) return;
+    try { await navigator.clipboard.writeText(id); e.target.textContent = 'Copiado'; }
+    catch { e.target.textContent = id; }
+    setTimeout(() => { e.target.textContent = 'Copiar el ID de la voz'; }, 1600);
+  });
+  try { const g = localStorage.getItem('denticode-voz'); if (g !== null) elegir(+g); } catch {}
+})();
+</script>
+</body>
+</html>

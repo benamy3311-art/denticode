@@ -1,0 +1,119 @@
+/* Video de lanzamiento DentiCode · 1080×1920 · registro expresivo.
+   Escena = bloque de color a sangre. Letra Geist 800 que llena el ancho. Motivo: las tiras
+   acanaladas de la marca, que barren la pantalla entre escenas. Las piezas pisan la letra. */
+
+:root {
+  --negro: #0B0D10;
+  --hondo: #072B47;
+  --azul-v: #1DA1F2;
+  --celeste: #8CCFFA;
+  --claro: #E9EDF2;
+}
+html, body { margin: 0; padding: 0; background: var(--negro); }
+body { inline-size: 1080px; block-size: 1920px; overflow: hidden; font-family: var(--fuente); }
+.cuadro { position: relative; inline-size: 1080px; block-size: 1920px; overflow: hidden; }
+.escena { position: absolute; inset: 0; overflow: hidden; visibility: hidden; }
+.cam { position: absolute; inset: 0; transform-origin: 50% 40%; }
+[data-p] { will-change: transform, opacity, filter; }
+
+.negro { background: var(--negro); color: #fff; }
+.hondo { background: radial-gradient(80% 50% at 50% 70%, #0E4C7D, transparent 70%), var(--hondo); color: #fff; }
+.claro { background: var(--claro); color: var(--tinta); }
+.azul { background: var(--azul-v); color: #fff; }
+.azul-css {
+  background:
+    repeating-linear-gradient(90deg, rgba(4,24,44,.18) 0 3px, transparent 3px 58px, rgba(255,255,255,.12) 58px 60px),
+    radial-gradient(60% 35% at 50% 30%, rgba(255,255,255,.38), transparent 70%),
+    linear-gradient(170deg, #062A47 0%, #0F68A8 34%, #1DA1F2 62%, #8CCFFA 90%);
+}
+
+/* ── Letra gigante ── */
+.gigante { margin: 0; font-weight: 800; letter-spacing: -.055em; line-height: .86; white-space: nowrap; inline-size: max-content; }
+.m { display: inline-block; overflow: hidden; vertical-align: top; padding: .02em .015em .1em; margin: -.02em -.015em -.1em; }
+.w { display: inline-block; }
+.blanco { color: #fff; }
+.celeste { color: var(--celeste); }
+.tenue { color: #5B6673; }
+.pila { position: absolute; left: 70px; top: 460px; display: grid; gap: 6px; }
+.pila-arriba { top: 150px; }
+.reloj { position: absolute; left: 70px; top: 70px; font-family: var(--mono); font-weight: 600; letter-spacing: -.06em; color: var(--azul-v); }
+
+/* ── Teléfono en 3D ── */
+.tel {
+  position: absolute; left: 140px; inline-size: 800px; block-size: 1640px; border-radius: 120px; padding: 22px;
+  background: linear-gradient(145deg, #2A2F36, #0C0E11 40%, #1B1F24); box-shadow: 0 80px 120px -40px rgba(0,0,0,.65), inset 0 0 0 3px rgba(255,255,255,.08);
+}
+.tel-pantalla { position: relative; block-size: 100%; border-radius: 100px; overflow: hidden; }
+.tel-gancho { top: 900px; }
+.bloqueo { background: radial-gradient(90% 60% at 50% 0%, #1B5C8F, transparent 70%), linear-gradient(180deg, #0B2338, #050A10); padding: 80px 48px 0; display: grid; align-content: start; gap: 22px; color: #fff; }
+.tel-hora { margin: 0; text-align: center; font-size: 150px; font-weight: 700; letter-spacing: -.04em; line-height: 1; }
+.tel-fecha { margin: 0 0 24px; text-align: center; font-size: 40px; font-weight: 500; color: rgba(255,255,255,.75); }
+.notif-v { display: grid; grid-template-columns: 96px 1fr auto; gap: 24px; align-items: center; padding: 28px; border-radius: 44px; background: rgba(255,255,255,.16); -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); }
+.notif-v .av { display: grid; place-items: center; inline-size: 96px; block-size: 96px; border-radius: 50%; background: var(--rosa); color: var(--rosa-t); font-size: 32px; font-weight: 700; }
+.notif-v > span:nth-child(2) { display: grid; gap: 4px; }
+.notif-v b { font-size: 38px; }
+.notif-v span span { font-size: 36px; line-height: 1.25; color: rgba(255,255,255,.9); }
+.notif-v time { align-self: start; font: 500 28px var(--mono); color: rgba(255,255,255,.6); }
+
+.tel-chat { top: 860px; block-size: 1420px; }
+.chat-v { background: #F4F1EC; padding: 0 36px; display: flex; flex-direction: column; gap: 22px; }
+.chat-v header { display: flex; gap: 22px; align-items: center; margin: 0 -36px 10px; padding: 70px 44px 26px; background: #fff; }
+.chat-v header img { border-radius: 50%; }
+.chat-v header span { display: grid; }
+.chat-v header b { font-size: 38px; }
+.chat-v header small { font-size: 28px; color: var(--ok); font-weight: 500; }
+.b { margin: 0; max-width: 86%; padding: 24px 30px; font-size: 38px; line-height: 1.3; border-radius: 40px; box-shadow: 0 2px 2px rgba(0,0,0,.06); }
+.entra { align-self: flex-start; background: #fff; border-top-left-radius: 12px; transform-origin: top left; }
+.sale { align-self: flex-end; background: #D9FDD3; color: #12321C; border-top-right-radius: 12px; transform-origin: top right; }
+.onda-v { display: inline-block; inline-size: 380px; block-size: 46px; vertical-align: middle; background: repeating-linear-gradient(90deg, #5D6B78 0 6px, transparent 6px 15px); border-radius: 4px; }
+.b small { margin-left: 16px; font-size: 28px; color: var(--tinta-2); }
+.nota-v { margin: 0; align-self: center; max-width: 82%; text-align: center; font-size: 30px; line-height: 1.35; color: #6B7681; font-style: italic; }
+.chips { display: flex; gap: 14px; margin-top: 18px; }
+.chips span { padding: 12px 30px; border-radius: 999px; background: #fff; font-size: 34px; font-weight: 700; color: #0B6CB3; }
+.toque { position: absolute; left: 0; top: 0; inline-size: 90px; block-size: 90px; margin: -45px 0 0 -45px; border-radius: 50%; background: rgba(11,108,179,.28); box-shadow: 0 0 0 3px rgba(11,108,179,.5); opacity: 0; }
+.sello-cita { position: absolute; left: 300px; top: 1560px; margin: 0; display: inline-flex; align-items: center; gap: 18px; padding: 30px 46px; border-radius: 999px; background: var(--tinta); color: #fff; font-size: 52px; font-weight: 800; letter-spacing: -.02em; box-shadow: 0 40px 60px -24px rgba(0,0,0,.5); }
+.sello-cita svg { color: #5FD39A; }
+
+/* ── Panel en 3D ── */
+.escenario-3d { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 40%; }
+.placa { position: absolute; left: 60px; top: 640px; inline-size: 1440px; block-size: 1400px; border-radius: 48px; overflow: hidden; transform-origin: 0 0; box-shadow: 0 120px 160px -60px rgba(0,0,0,.7); }
+.placa iframe { display: block; border: 0; }
+.globo-v { position: absolute; margin: 0; display: grid; gap: 4px; padding: 26px 36px; border-radius: 36px; background: rgba(255,255,255,.96); color: var(--tinta); box-shadow: 0 40px 60px -26px rgba(0,0,0,.55); }
+.globo-v small { font-size: 28px; font-weight: 500; color: var(--tinta-2); }
+.globo-v b { font-size: 56px; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.g1 { left: 640px; top: 640px; }
+.g2 { left: 60px; top: 1060px; }
+.g3 { left: 560px; top: 1320px; }
+.g4 { left: 90px; top: 1580px; }
+
+/* ── Cinco golpes ── */
+/* el número del momento es gigante y oscuro: llena el fondo sin competir con la palabra */
+.contador { position: absolute; left: 40px; top: 60px; margin: 0; font: 600 620px/1 var(--mono); letter-spacing: -.08em; color: #171C23; }
+.contador small { display: none; }
+.golpes { position: absolute; left: 70px; right: 70px; top: 620px; }
+.golpe { position: absolute; left: 0; top: 0; display: grid; gap: 50px; }
+.prueba { margin: 0; display: inline-flex; align-items: center; gap: 22px; justify-self: start; padding: 26px 42px; border-radius: 999px; background: rgba(255,255,255,.1); font-size: 46px; font-weight: 600; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.14); }
+.prueba i { inline-size: 18px; block-size: 18px; border-radius: 50%; background: #5FD39A; box-shadow: 0 0 0 6px rgba(95,211,154,.2); }
+
+/* ── Ley 1581 ── */
+.mini { position: absolute; left: 70px; top: 230px; margin: 0; font: 600 44px var(--mono); letter-spacing: .04em; color: var(--tinta-2); }
+.enorme { position: absolute; left: 70px; top: 310px; color: var(--tinta); }
+.candado-v { position: absolute; left: 760px; top: 860px; display: grid; place-items: center; inline-size: 250px; block-size: 250px; border-radius: 70px; background: var(--azul-v); color: #fff; box-shadow: 0 40px 60px -26px rgba(11,94,153,.6); }
+.sellos { position: absolute; left: 70px; top: 1180px; margin: 0; padding: 0; list-style: none; display: grid; gap: 22px; justify-items: start; }
+.sellos li { display: inline-flex; align-items: center; gap: 22px; padding: 26px 46px 26px 30px; border-radius: 999px; background: var(--tinta); color: #fff; font-size: 54px; font-weight: 700; letter-spacing: -.02em; }
+.sellos li::before { content: ""; inline-size: 40px; block-size: 40px; border-radius: 50%; background: #5FD39A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.6 2.6L12 5.5' stroke='%23062A1A' stroke-width='2.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/26px no-repeat; }
+
+/* ── Marca y cierre ── */
+#muela { position: absolute; inset: 0; inline-size: 1080px; block-size: 1920px; }
+.marca-abajo { position: absolute; left: 70px; right: 70px; top: 1300px; display: grid; gap: 22px; }
+.lema-v { margin: 0; font-size: 64px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; color: #fff; }
+.suave { color: rgba(255,255,255,.72); }
+[data-escena="cierre"] .denti-v { position: absolute; left: 350px; top: 170px; }
+[data-escena="cierre"] .denti-v svg { overflow: visible; filter: drop-shadow(0 40px 50px rgba(4, 30, 55, .4)); }
+[data-escena="cierre"] [data-p="nombre"] { position: absolute; left: 70px; top: 820px; }
+[data-escena="cierre"] .lema-v { position: absolute; left: 70px; top: 1090px; }
+.cta-v { position: absolute; left: 70px; top: 1250px; margin: 0; padding: 34px 70px; border-radius: 999px; background: var(--tinta); color: #fff; font-size: 54px; font-weight: 800; letter-spacing: -.02em; box-shadow: 0 40px 60px -26px rgba(4, 30, 55, .6); }
+
+/* ── Barrido acanalado ── */
+.barrido { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(12, 1fr); pointer-events: none; z-index: 10; }
+.barrido i { display: block; block-size: 100%; transform: scaleY(0); box-shadow: inset -6px 0 10px -6px rgba(0,0,0,.25), inset 6px 0 10px -8px rgba(255,255,255,.25); }

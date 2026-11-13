@@ -1,0 +1,14 @@
+{
+  "name": "denticode-video",
+  "private": true,
+  "description": "Video de lanzamiento de DentiCode",
+  "scripts": {
+    "voz": "node voz.js",
+    "voz:eleven": "node voz.js eleven",
+    "fotos": "node render.js fotos",
+    "video": "node render.js"
+  },
+  "dependencies": {
+    "puppeteer-core": "23.11.1"
+  }
+}
